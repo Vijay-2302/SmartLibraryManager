@@ -1,7 +1,9 @@
 using Playnite.SDK;
+using Playnite.SDK.Models;
 using Playnite.SDK.Plugins;
 using System;
 using System.Collections.Generic;
+using Playnite.SmartLibraryManager.Utilities;
 
 namespace Playnite.SmartLibraryManager
 {
@@ -20,14 +22,23 @@ namespace Playnite.SmartLibraryManager
         }
 
         public override IEnumerable<GameMenuItem> GetGameMenuItems(GetGameMenuItemsArgs args)
-        { 
+        {
             yield return new GameMenuItem
             {
                 Description = "Smart Library Manager",
                 Action = (menuArgs) =>
                 {
+                    if (args.Games.Count == 0)
+                    {
+                        PlayniteApi.Dialogs.ShowMessage("No game selected.");
+                        return;
+                    }
+                    Game game = args.Games[0];
+
+                    string normalizedTitle = TitleNormalizer.Normalize(game.Name);
+
                     PlayniteApi.Dialogs.ShowMessage(
-                        "Hello from Smart Library Manager!"
+                        $"Original: {game.Name}\n\nNormalized: {normalizedTitle}"
                     );
                 }
             };
