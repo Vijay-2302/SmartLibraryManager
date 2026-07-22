@@ -1,9 +1,8 @@
 using Playnite.SDK;
-using Playnite.SDK.Models;
 using Playnite.SDK.Plugins;
 using System;
 using System.Collections.Generic;
-using Playnite.SmartLibraryManager.Utilities;
+using Playnite.SmartLibraryManager.Services;
 
 namespace Playnite.SmartLibraryManager
 {
@@ -17,29 +16,19 @@ namespace Playnite.SmartLibraryManager
             }
         }
 
-        public Plugin(IPlayniteAPI api) : base(api)
-        {
-        }
+        public Plugin(IPlayniteAPI api) : base(api){}
 
-        public override IEnumerable<GameMenuItem> GetGameMenuItems(GetGameMenuItemsArgs args)
+        public override IEnumerable<MainMenuItem> GetMainMenuItems(GetMainMenuItemsArgs args)
         {
-            yield return new GameMenuItem
+            yield return new MainMenuItem
             {
-                Description = "Smart Library Manager",
+                MenuSection = "@Smart Library Manager",
+                Description = "Find Duplicate Games",
                 Action = (menuArgs) =>
                 {
-                    if (args.Games.Count == 0)
-                    {
-                        PlayniteApi.Dialogs.ShowMessage("No game selected.");
-                        return;
-                    }
-                    Game game = args.Games[0];
-
-                    string normalizedTitle = TitleNormalizer.Normalize(game.Name);
-
-                    PlayniteApi.Dialogs.ShowMessage(
-                        $"Original: {game.Name}\n\nNormalized: {normalizedTitle}"
-                    );
+                    var duplicateGames = DuplicateFinder.FindDuplicates(
+                        PlayniteApi.Database.Games);
+                    PlayniteApi.Dialogs.ShowMessage(duplicateGames.Count + " Duplicates Found");
                 }
             };
         }

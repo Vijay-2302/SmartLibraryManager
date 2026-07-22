@@ -10,7 +10,7 @@ namespace Playnite.SmartLibraryManager.Utilities
             {
                 title = RemoveSuffixes(title, suffix);
             }
-            return title;
+            return title.TrimEnd(' ', '-', ':');
         }
 
         private static string RemoveTrailingParentheses(string text)
